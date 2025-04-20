@@ -41,7 +41,7 @@ public class PessoaRepositoryImp implements PessoaRepository{
     public Integer save(Pessoa pessoa) {
         return this.jdbcClient
                 .sql("""
-            INSERT INTO pessoas (nome, cpf, telefone, email) 
+            INSERT INTO pessoas (nome, cpf, telefone, email)
             VALUES (:nome, :cpf, :telefone, :email)
             """)
                 .param("nome", pessoa.getNome())

@@ -20,6 +20,7 @@ public class Aluguel {
     private String pessoaCpf;
     private String pessoaNome;
     private LocalDate dataInicio;
+    private LocalDate dataFim;
     private BigDecimal valorTotal;
 
 }
