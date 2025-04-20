@@ -2,6 +2,7 @@ package br.com.fiap.locatech.locatech.services;
 
 import br.com.fiap.locatech.locatech.entities.Pessoa;
 import br.com.fiap.locatech.locatech.repositories.PessoaRepository;
+import br.com.fiap.locatech.locatech.services.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -23,7 +24,7 @@ public class PessoaService {
     }
 
     public Optional<Pessoa> findById(Long id) {
-        return this.pessoaRepository.findById(id);
+        return Optional.ofNullable(this.pessoaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pessoa não econtrada")));
     }
 
     public void savePessoa(Pessoa pessoa) {

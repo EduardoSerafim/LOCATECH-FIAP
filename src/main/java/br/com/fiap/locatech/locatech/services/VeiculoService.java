@@ -3,6 +3,7 @@ package br.com.fiap.locatech.locatech.services;
 import br.com.fiap.locatech.locatech.entities.Veiculo;
 import br.com.fiap.locatech.locatech.repositories.VeiculoRepository;
 
+import br.com.fiap.locatech.locatech.services.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -24,7 +25,7 @@ public class VeiculoService {
     }
 
     public Optional<Veiculo> findById(Long id) {
-        return this.veiculoRepository.findById(id);
+        return Optional.ofNullable(this.veiculoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado")));
     }
 
     public void saveVeiculo(Veiculo veiculo) {
