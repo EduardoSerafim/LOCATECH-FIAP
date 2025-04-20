@@ -1,19 +1,24 @@
 package br.com.fiap.locatech.locatech.services;
 
+import br.com.fiap.locatech.locatech.dto.AluguelRequestDTO;
 import br.com.fiap.locatech.locatech.entities.Aluguel;
 import br.com.fiap.locatech.locatech.repositories.AluguelRepository;
+import br.com.fiap.locatech.locatech.repositories.VeiculoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AluguelService {
     private final AluguelRepository alguelRepository;
+    private final VeiculoRepository veiculoRepository;
 
-    public AluguelService(AluguelRepository alguelRepository) {
+    public AluguelService(AluguelRepository alguelRepository, VeiculoRepository veiculoRepository) {
         this.alguelRepository = alguelRepository;
+        this.veiculoRepository = veiculoRepository;
     }
 
 
@@ -26,9 +31,10 @@ public class AluguelService {
         return this.alguelRepository.findById(id);
     }
 
-    public void saveAluguel(Aluguel alguel) {
-        var save = this.alguelRepository.save(alguel);
-        Assert.state(save == 1, "Erro ao salvar alguel " + alguel.getPessoaNome());
+    public void saveAluguel(AluguelRequestDTO aluguel) {
+        var aluguelEntity = calculaAluguel(aluguel);
+        var save = this.alguelRepository.save(aluguelEntity);
+        Assert.state(save == 1, "Erro ao salvar alguel " + aluguel.pessoaId());
     }
 
     public void updateAluguel(Aluguel alguel, Long id) {
@@ -43,5 +49,13 @@ public class AluguelService {
         if (delete == 0){
             throw new RuntimeException("Aluguel não encontrada");
         }
+    }
+
+    private Aluguel calculaAluguel(AluguelRequestDTO aluguelRequestDTO) {
+        var veiculo = veiculoRepository.findById(aluguelRequestDTO.veiculoId()).orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+        var quantidadeDias = BigDecimal.valueOf(aluguelRequestDTO.dataFim().getDayOfYear() - aluguelRequestDTO.dataInicio().getDayOfYear());
+        var valor = veiculo.getValorDiaria().multiply(quantidadeDias);
+
+        return new Aluguel(aluguelRequestDTO, valor);
     }
 }
