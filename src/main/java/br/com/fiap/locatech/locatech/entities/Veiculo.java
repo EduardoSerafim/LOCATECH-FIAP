@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class  Veiculo {
+public class Veiculo {
     private Long id;
     private String marca;
     private String modelo;
